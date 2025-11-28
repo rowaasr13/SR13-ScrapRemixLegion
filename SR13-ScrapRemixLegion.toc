@@ -1,0 +1,27 @@
+## Interface: 110205
+
+## Title: SR13-ScrapLegion
+## Version: v1
+## Notes:
+## Author: Oleg "Rowaa[SR13]" Volkov
+
+## X-License: All Rights Reserved.
+## X-Curse-Project-ID:
+## X-WoWI-ID:
+
+## LoadOnDemand: 0
+## LoadWith:
+## Dependencies:
+## OptionalDeps: LibStub, LibDataBroker-1.1, LibQTip-1.0, SR13-Lib, SR13-+DEVEL, SR13-TimeRecord
+
+## SavedVariables: SV_SR13LazyDataCache
+## SavedVariablesPerCharacter:
+
++DEVEL.lua
+export.lua
+
+lazy_table.lua
+cache_APIDocumentation.lua
+getters_multireturn.lua
+item.lua
+item.remix.legion.lua
