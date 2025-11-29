@@ -37,7 +37,7 @@ lazy_item_template.RemixLegionDuplicateKey = function(tbl, key)
       return CACHE_ALL,
          itemEquipLoc .. ',' ..
          tbl["C_Item.GetDetailedItemLevelInfo|actualItemLevel"] .. ',' ..
-         tbl["C_Item.GetItemInfoInstant|itemID"]
+         tbl[tbl.GetItemID]
    end
 
    local classID = tbl["C_Item.GetItemInfoInstant|classID"]
@@ -136,6 +136,7 @@ end
 
 local function NoOp() end
 
+-- /run _G["SR13-LazyDataCache"].ScrapRemixLegion({ debug_print = true, debug_itemid = { [246205] = true }, })
 -- /run _G["SR13-ScrapRemixLegion"].ScrapRemixLegion({ debug_print = true })
 local uniq_keys = {}
 local items = {}
@@ -211,6 +212,9 @@ local function ScrapRemixLegion(args)
             local current_item_level = item["C_Item.GetDetailedItemLevelInfo|actualItemLevel"]
             print("max, current", max_level, current_item_level)
          end end
+         if debug_print then
+            if (args and args.debug_itemid and args.debug_itemid[item[item.GetItemID]]) then print("debug_true", item[item.GetItemID]) item.debug_print = true end
+         end
          if key then
             if uniq_keys[key] then
                if debug_print then print("dup", bag, slot, item[ItemMixin.GetItemLink], "was", uniq_keys[key]) end
@@ -231,9 +235,8 @@ local function ScrapRemixLegion(args)
 
          if added_scrap >= scrap_buttons_num then return scrap_action(added_scrap) end
       end
-
-      return scrap_action(added_scrap)
    end
+   return scrap_action(added_scrap)
 end
 -- _G["SR13-LazyDataCache"].ScrapRemixLegion
 -- _G["SR13-ScrapRemixLegion"].ScrapRemixLegion
