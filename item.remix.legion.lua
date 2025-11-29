@@ -144,6 +144,7 @@ local function ScrapRemixLegion(args)
    local debug_print = args and args.debug_print
    local reverse = args and args.reverse
    local scrap = args and args.scrap
+   local reverse = args and args.reverse
 
    -- defaults
    if scrap == nil then scrap = true end
@@ -190,9 +191,14 @@ local function ScrapRemixLegion(args)
       uniq_keys[key] = 'eq,' .. slot
       if debug_print then print("eq (slot, key)", slot, key, item[RememberArmorMaxLevel]) end
    end
+
    -- Remember max ilevels from all bags in advance
-   for bag = Enum.BagIndex.Backpack, NUM_TOTAL_BAG_FRAMES do
-      for slot = 1, ContainerFrame_GetContainerNumSlots(bag) do
+   local bag_first, bag_last, bag_inc = Enum.BagIndex.Backpack, NUM_TOTAL_BAG_FRAMES, 1
+   if reverse then bag_first, bag_last, bag_inc = bag_last, bag_first, -1 end
+   for bag = bag_first, bag_last, bag_inc do
+      local slot_first, slot_last, slot_inc = 1, ContainerFrame_GetContainerNumSlots(bag), 1
+      if reverse then slot_first, slot_last, slot_inc = slot_last, slot_first, -1 end
+      for slot = slot_first, slot_last, slot_inc do
          local item = CreateLazyItemFromBagAndSlot(bag, slot)
          local max_level = item[RememberAcessoryMaxLevel]
          local max_level = item[RememberArmorMaxLevel]
@@ -201,8 +207,10 @@ local function ScrapRemixLegion(args)
    end
 
    -- Scan for scrap
-   for bag = Enum.BagIndex.Backpack, NUM_TOTAL_BAG_FRAMES do
-      for slot = 1, ContainerFrame_GetContainerNumSlots(bag) do
+   for bag = bag_first, bag_last, bag_inc do
+      local slot_first, slot_last, slot_inc = 1, ContainerFrame_GetContainerNumSlots(bag), 1
+      if reverse then slot_first, slot_last, slot_inc = slot_last, slot_first, -1 end
+      for slot = slot_first, slot_last, slot_inc do
          local item = items[bag .. ',' .. slot] -- reuse what we already got in previous scans
          local key = item.RemixLegionDuplicateKey
          if debug_print then if bag == 0 and (slot == 1 or slot == 2) then
@@ -238,8 +246,6 @@ local function ScrapRemixLegion(args)
    end
    return scrap_action(added_scrap)
 end
--- _G["SR13-LazyDataCache"].ScrapRemixLegion
--- _G["SR13-ScrapRemixLegion"].ScrapRemixLegion
 _G[a_name] = _G[a_name] or {} _G[a_name].ScrapRemixLegion = ScrapRemixLegion
 
 --[[
