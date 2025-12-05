@@ -1,7 +1,7 @@
-## Interface: 110205
+## Interface: 110207
 
 ## Title: SR13-ScrapLegion
-## Version: v3
+## Version: v4
 ## Notes:
 ## Author: Oleg "Rowaa[SR13]" Volkov
 
