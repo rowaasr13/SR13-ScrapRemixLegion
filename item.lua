@@ -47,10 +47,14 @@ local function MixInLazyItem(mixed_item)
 end
 a_env.MixInLazyItem = MixInLazyItem
 
-function CreateLazyItemFromBagAndSlot(bag, slot)
+local function CreateLazyItemFromBagAndSlot(bag, slot)
    return MixInLazyItem(Item:CreateFromBagAndSlot(bag, slot))
 end
 a_env.CreateLazyItemFromBagAndSlot = CreateLazyItemFromBagAndSlot
+
+local function CreateLazyItemFromItemID(item_id)
+   return MixInLazyItem(Item:CreateFromItemID(item_id))
+end
 
 local function MakeMixedItemToItemLinkAdapter(target_function)
    return function(mixed_item)
@@ -113,12 +117,39 @@ lazy_item_template.IsVisibleEquipment = function(tbl, key)
    return CACHE_ALL, true
 end
 
+local function text_to_pattern(text)
+   local pattern = string.gsub(text, '([()[%]%.])', '%%%1')
+   return string.gsub(pattern, '%%s', '.-')
+end
 
+-- Returns true if item has "You may trade this item with players that were also eligible to loot..." timer
+local BIND_TRADE_TIME_REMAINING_pattern = '^' .. text_to_pattern(BIND_TRADE_TIME_REMAINING)
+lazy_item_template.HasTradeTimer = function(tbl, key)
+   -- TODO: can EVER be true only for container item,
+   -- return early or set in advance for non-container item
+   local lines = tbl.tooltipData.lines
+   local has = false
+
+   for idx = 2, #lines do
+      local line = lines[idx]
+      local left_text = line.leftText
+      if string.match(left_text, BIND_TRADE_TIME_REMAINING_pattern) then
+         has = true
+      end
+   end
+
+   tbl.HasTradeTimer = has
+   return has
+end
+
+-- /run TESTITEM=_G["SR13-Lib"]["SR13-LazyDataCache"]["item"].CreateLazyItemFromBagAndSlot(0, 1); lazy_table_vivify_all(TESTITEM)
+-- /run TESTITEM=_G["SR13-Lib"]["SR13-LazyDataCache"]["item"].CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM.HasTradeTimer)
+-- /run TESTITEM.tooltipData.lines[14].leftColor = nil
+-- /dump TESTITEM.tooltipData.lines[14]
 -- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM["C_Item.GetItemInfo\124sellPrice"]); print(TESTITEM["C_Item.GetItemInfoInstant\124itemID"])
 -- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM["C_Item.GetItemInfo\124sellPrice"]); print(TESTITEM["C_Item.GetItemInfoInstant\124classID"])
 -- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM["C_Item.GetItemInfo\124sellPrice"]); print(TESTITEM["C_Item.GetItemInfoInstant\124itemEquipLoc"])
 -- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM["C_Item.GetItemInfo\124sellPrice"]); print(TESTITEM.IsVisibleEquipment)
--- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); lazy_table_vivify_all(TESTITEM)
 -- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM.itemGUID)
 -- /run TESTITEM=CreateLazyItemFromBagAndSlot(0, 1); print(TESTITEM.tooltipData)
 -- /dump TESTITEM.tooltipData
@@ -141,3 +172,20 @@ end
 -- ItemUtil.IteratePlayerInventoryAndEquipment
 -- ItemUtil.IteratePlayerInventory(callback);
 -- ItemUtil.IterateInventorySlots(INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED, callback);
+
+local module_name = 'item'
+local export = {
+   lazy_item_template           = lazy_item_template,
+   MixInLazyItem                = MixInLazyItem,
+   CreateLazyItemFromBagAndSlot = CreateLazyItemFromBagAndSlot,
+   CreateLazyItemFromItemID     = CreateLazyItemFromItemID,
+}
+
+if not _G["SR13-Lib"] then _G["SR13-Lib"] = {} end
+if not _G["SR13-Lib"][a_name] then _G["SR13-Lib"][a_name] = {} end
+if not _G["SR13-Lib"][a_name][module_name] then _G["SR13-Lib"][a_name][module_name] = {} end
+
+local target = _G["SR13-Lib"][a_name][module_name]
+for key, val in pairs(export) do
+   target[key] = val
+end
