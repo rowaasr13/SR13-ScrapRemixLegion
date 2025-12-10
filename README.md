@@ -6,15 +6,15 @@ by rowaasr13
 ### !!!REQUIRES [OOCDo ("Out-of-combat Do" macro button")](https://www.curseforge.com/wow/addons/oocdo) TO ACTUALLY PERFORM CAST AND CLICK!!! Without it it will only push items into scrap machine.
 
 A one-click (macro) button that does all of:
-* Casts Unraveling Sands (when scrapping machine interface is not open already)
-* Pushes items into scrapping maching
-* Clicks actual "Scrap" button
+* Casts Unraveling Sands (when scrapping machine interface is not open already, requires OOCDo)
+* Pushes items into scrapping machine
+* Clicks actual "Scrap" button (requires OOCDo)
 
 The only thing you need to do yourself is to right click on those Unraveling Sands when they appear - there are no way to do that automatically.
 
-## How it is different?
+## How it is different from other scrapping addons?
 I've checked out other scrapping addons for Legion Remix and couldn't find a feature I wanted - ability to scrap duplicates.
-At maximum 740 ilevel I want to keep one copy of each item with different stats and scrap all duplicates. Brief search revealed that other people had same idea, so I decided to write my own scrapper just for that.
+At maximum ilevel I want to keep one copy of each item with different stats and scrap only duplicates. Brief search among other addons only shown that other people were looking in comments for this feature too, so I decided to write my own scrapper just for that.
 
 ## What is scrapped?
 * Duplicates, as mentioned above: i.e. any item that has same ilevel, same slot and same set of 2/3 bonus stats on it. It does not matter if items could have different names/appearances.
