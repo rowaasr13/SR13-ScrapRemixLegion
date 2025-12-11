@@ -1,7 +1,7 @@
 local a_name, a_env = ...
 if not a_env.load_this then return end
 
-local lazy_table = (a_env.internal_export and a_env.internal_export.lazy_table) or _G["SR13-Lib"].lazy_table
+local lazy_table = (a_env.export_internal and a_env.export_internal.lazy_table) or _G["SR13-Lib"].lazy_table
 a_env.lazy_table = lazy_table
 
 local CACHE_ALL = lazy_table.constants.CACHE.ALL
